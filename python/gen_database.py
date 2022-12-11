@@ -40,10 +40,10 @@ class GenDatabase:
         Open time	Open	High	Low	Close	Volume	Close time	Quote asset volume	Number of trades	Taker buy base asset volume	Taker buy quote asset volume	Ignore
         database 格式 key: BTCUSDT - datetime.strftime("%d %b %Y %H:%M:%S")
         '''
-        symbol = os.path.basename(csvname)
+        csv_basename = os.path.basename(csvname)
 
-        if cache.get(f"{symbol}-end") == 1: # 如果该文件已经转换完毕了则跳过
-            print(f"{symbol}已经转换完毕，跳过")
+        if cache.get(f"{csv_basename}-end") == 1: # 如果该文件已经转换完毕了则跳过
+            print(f"{csv_basename}已经转换完毕，跳过")
             return
 
         # 检查csv文件类型，保证第一行不是列名称
@@ -56,18 +56,20 @@ class GenDatabase:
             with open(csvname, "w") as f:
                 f.writelines(lines[1:])
 
-        cache[f"{symbol}-start"] = 1 # 标志该文件开始
+        cache[f"{csv_basename}-start"] = 1 # 标志该文件开始
         df = pandas.read_csv(csvname, prefix="_c", header=None)
         print(f"f{csvname} 转database开始")
         for i in range(len(df)):
             timestamp = df["_c0"][i]
             price = (df["_c2"][i] + df["_c3"][i]) / 2
             _date = datetime.fromtimestamp(int(timestamp/1000))
+            symbol = csv_basename.split("USDT")[0]
             cache[f"{symbol}USDT - {_date.strftime('%d %b %Y %H:%M:%S')}"] = price
-            # print(_date, price)
-        cache[f"{symbol}-end"] = 1 # 标志该文件完成
+        cache[f"{csv_basename}-end"] = 1 # 标志该文件完成
         cache.commit()
         print(f"f{csvname} 转database完成")
 
 if __name__ == "__main__":
     GenDatabase()
+    # print(cache.get("ATOMUSDT-1m-2022-07.csv - 11 Dec 2022 17:44:16"))
+    # print(cache.get("YFIUSDT - 1 Dec 2022 17:44:00"))
