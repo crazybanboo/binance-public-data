@@ -120,5 +120,5 @@ if __name__ == "__main__":
         dates = [date.strftime("%Y-%m-%d") for date in dates]
         download_monthly_markPriceKlines(args.type, symbols, num_symbols, args.intervals, args.years, args.months,
                                           args.startDate, args.endDate, args.folder, args.checksum)
-    download_daily_markPriceKlines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate,
-                                    args.endDate, args.folder, args.checksum)
+    # download_daily_markPriceKlines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate,
+    #                                 args.endDate, args.folder, args.checksum)
